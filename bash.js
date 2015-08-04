@@ -6,21 +6,24 @@ process.stdout.write('prompt > ');
 process.stdin.on('data', function(data) {
     var args = data.toString().trim().split(' ');
     var cmd = args[0];
-    var param = args[1];
+    var param = args.slice(1).join(' ');
+
+ //    var cmdString = d.toString().trim();
+	// var cmdList = cmdString.split(/\s*\|\s*/g);
+	// var cmdList_cmd1 = cmdList[0].split(' ');
+
     // var param = process.argv;
-    if (!commands[cmd]) {
-    	process.stdout.write('prompt > ');	
+    if (commands[cmd]) {
+    	commands[cmd](param, funcs.done);
     } else {
-    	commands[cmd](param, funcs.done);	
+    	process.stdout.write('prompt > ');
     }
 });
 
 var funcs = {
 	done: function(output) {
 		// show the output
-		process.stdout.write(output);
-		// show the prompt
-		process.stdout.write('\nprompt > ');
+		process.stdout.write(output + '\nprompt > ');
 	}
 };
 

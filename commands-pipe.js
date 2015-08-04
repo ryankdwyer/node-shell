@@ -3,11 +3,11 @@ var request = require('request');
 var done = require('./bash.js').done;
 
 var commands = {
-    pwd: function(param, done) {
+    pwd: function(stdin, param, done) {
         done(process.cwd());
     },
 
-    ls: function(param, done) {
+    ls: function(stdin, param, done) {
         var output = '';
         fs.readdir('.', function(err, files) {
             // '.' refers to the current working directory NOT where this commands file exists
@@ -20,7 +20,8 @@ var commands = {
         });
         
     },
-    echo: function(file, done) {
+    echo: function(stdin, file, done) {
+        if (stdin) file = stdin;
         if (file[0] === '$') {
             done(process.env[arg.slice(1)]);
         } else {
@@ -30,7 +31,8 @@ var commands = {
     date: function(param, done) {
         done(Date());
     },
-    cat: function(files, done) {
+    cat: function(stdin, files, done) {
+        if (stdin) file = stdin;
         files = files.split(' ');
         var texts = [];
         var counter = 0;
@@ -40,13 +42,14 @@ var commands = {
             fs.readFile(file, function(err, data){
                 if(err) throw err;
                 // Pushes the data at the index closed over from the forEach
-                texts[idx] = data;
-                counter++;
-                if (counter === files.length) done(texts.join('\n'));
+                text[idx] = data;
+                count++;
+                if (count === files.length) done(text.join('\n'));
             });
         });
     },
-    head: function(file, done) {
+    head: function(stdin, file, done) {
+        if (stdin) file = stdin;
         fs.readFile(file, function(err, data){
             if(err) throw err;
             var fileStream = '';
@@ -54,7 +57,8 @@ var commands = {
             done(fileStream.split('\n').slice(0,5).join('\n'));
         });
     },
-    tail: function(file, done){
+    tail: function(stdin, file, done){
+        if (stdin) file = stdin;
         fs.readFile(file, function(err, data){
             if(err) throw err;
             var fileStream = '';
@@ -62,7 +66,8 @@ var commands = {
             done(fileStream.split('\n').slice(-5).join('\n'));
         });
     },
-    sort: function(file, done){
+    sort: function(stdin, file, done){
+        if (stdin) file = stdin;
         fs.readFile(file, function(err, data){
             if(err) throw err;
             var fileStream = '';
@@ -70,7 +75,8 @@ var commands = {
             done(fileStream.split('\n').sort().join('\n'));
         });
     },
-    wc: function(file, done){
+    wc: function(stdin, file, done){
+        if (stdin) file = stdin;
         fs.readFile(file, function(err, data){
             if(err) throw err;
             var fileStream = '';
@@ -78,7 +84,8 @@ var commands = {
             done(fileStream.split('\n').length.toString());
         });
     },
-    uniq: function(file, done){
+    uniq: function(stdin, file, done){
+        if (stdin) file = stdin;
         fs.readFile(file, function(err, data){
             if(err) throw err;
             var fileStream = '';
@@ -93,7 +100,7 @@ var commands = {
             done(uniqd.join('\n'));
         });
     },
-    curl: function(url, done) {
+    curl: function(stdin, url, done) {
         if (stdin) url = stdin;
             request(url, function (error, response, body) {
                 if (!error && response.statusCode == 200) {
