@@ -4,10 +4,12 @@ var done = require('./bash.js').done;
 
 var commands = {
     pwd: function(stdin, param, done) {
+        param = stdin || param;
         done(process.cwd());
     },
 
     ls: function(stdin, param, done) {
+        param = stdin || param;
         var output = '';
         fs.readdir('.', function(err, files) {
             // '.' refers to the current working directory NOT where this commands file exists
@@ -21,18 +23,19 @@ var commands = {
         
     },
     echo: function(stdin, file, done) {
-        if (stdin) file = stdin;
+        file = stdin || file;
         if (file[0] === '$') {
             done(process.env[arg.slice(1)]);
         } else {
             done(file);    
         }
     },
-    date: function(param, done) {
+    date: function(stdin, param, done) {
+        param = stdin || param;
         done(Date());
     },
     cat: function(stdin, files, done) {
-        if (stdin) file = stdin;
+        files = stdin || files;
         files = files.split(' ');
         var texts = [];
         var counter = 0;
@@ -42,23 +45,26 @@ var commands = {
             fs.readFile(file, function(err, data){
                 if(err) throw err;
                 // Pushes the data at the index closed over from the forEach
-                text[idx] = data;
-                count++;
-                if (count === files.length) done(text.join('\n'));
+                texts[idx] = data.toString();
+                counter++;
+                if (counter === files.length) done(texts.join('\n'));
             });
         });
     },
     head: function(stdin, file, done) {
-        if (stdin) file = stdin;
-        fs.readFile(file, function(err, data){
+        if (stdin) {
+            done(stdin.split('\n').slice(0,5).join('\n'));
+        } else {
+            fs.readFile(file, function(err, data){
             if(err) throw err;
             var fileStream = '';
             fileStream += data.toString();
-            done(fileStream.split('\n').slice(0,5).join('\n'));
-        });
+                done(fileStream.split('\n').slice(0,5).join('\n'));
+            });   
+        }
     },
     tail: function(stdin, file, done){
-        if (stdin) file = stdin;
+        file = stdin || file;
         fs.readFile(file, function(err, data){
             if(err) throw err;
             var fileStream = '';
@@ -67,7 +73,7 @@ var commands = {
         });
     },
     sort: function(stdin, file, done){
-        if (stdin) file = stdin;
+        file = stdin || file;
         fs.readFile(file, function(err, data){
             if(err) throw err;
             var fileStream = '';
@@ -76,7 +82,7 @@ var commands = {
         });
     },
     wc: function(stdin, file, done){
-        if (stdin) file = stdin;
+        file = stdin || file;
         fs.readFile(file, function(err, data){
             if(err) throw err;
             var fileStream = '';
@@ -85,7 +91,7 @@ var commands = {
         });
     },
     uniq: function(stdin, file, done){
-        if (stdin) file = stdin;
+        file = stdin || file;
         fs.readFile(file, function(err, data){
             if(err) throw err;
             var fileStream = '';
@@ -101,7 +107,7 @@ var commands = {
         });
     },
     curl: function(stdin, url, done) {
-        if (stdin) url = stdin;
+        url = stdin || url;
             request(url, function (error, response, body) {
                 if (!error && response.statusCode == 200) {
                     done(body); // Show the HTML for the Google homepage. 
