@@ -1,0 +1,23 @@
+{
+  "name": "request",
+  "version": "1.0.0",
+  "description": "request module",
+  "main": "bash.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ryankdwyer/node-shell.git"
+  },
+  "keywords": [
+    "node-shell"
+  ],
+  "author": "ryan varun",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ryankdwyer/node-shell/issues"
+  },
+  "homepage": "https://github.com/ryankdwyer/node-shell#readme",
+  "dependencies": {}
+}
